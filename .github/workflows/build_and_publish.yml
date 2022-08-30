@@ -42,8 +42,8 @@ jobs:
           context: .
           # Note: tags has to be all lower-case
           tags: |
-            nonasoftware/parchmint:${{ github.sha }}
-            ghcr.io/nonasoftware/parchmint:${{ github.sha }}
+            nonasoftware/eugenecad:${{ github.sha }}
+            ghcr.io/nonasoftware/eugenecad:${{ github.sha }}
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/production' }}
 
