@@ -35,17 +35,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHA_PAT }}
       
-      - name: Build image and push to Docker Hub and GitHub Container Registry
-        uses: docker/build-push-action@v2
-        with:
-          # relative path to the place where source code with Dockerfile is located
-          context: .
-          # Note: tags has to be all lower-case
-          tags: |
-            nonasoftware/eugenecad:${{ github.sha }}
-            ghcr.io/nonasoftware/eugenecad:${{ github.sha }}
-          # build on feature branches, push only on main branch
-          push: ${{ github.ref == 'refs/heads/production' }}
-
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Build a docker container and push to registry
+          docker build -t nonasoftware/eugenecad:$IMAGE_TAG -t ghcr.io/nonasoftware/eugenecad:$IMAGE_TAG .
+          docker push nonasoftware/eugenecad:$IMAGE_TAG
+          docker push ghcr.io/nonasoftware/eugenecad:$IMAGE_TAG
+          echo "::set-output name=image::nonasoftware/eugenecad:$IMAGE_TAG"
